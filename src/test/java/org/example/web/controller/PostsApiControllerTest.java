@@ -1,6 +1,7 @@
 package org.example.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.domain.posts.Posts;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.http.MediaType;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -59,13 +62,13 @@ public class PostsApiControllerTest {
     @Test
     @WithMockUser(roles="USER")
     public void saveTest() throws Exception {
-        var title = "title";
-        var content = "content";
+        String title = "title";
+        String content = "content";
 
-        var requestDto = PostsSaveRequestDto.builder()
+        PostsSaveRequestDto requestDto = PostsSaveRequestDto.builder()
                 .title(title).content(content).author("author").build();
 
-        var url = "http://localhost:" + port + "/api/v1/posts";
+        String url = "http://localhost:" + port + "/api/v1/posts";
 
 //        var responseEntity = restTemplate.postForEntity(url, requestDto, Long.class);
 //
@@ -77,7 +80,7 @@ public class PostsApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isOk());
 
-        var postsList = postsRepository.findAll();
+        List<Posts> postsList = postsRepository.findAll();
         assertThat(postsList.get(0).getTitle()).isEqualTo(title);
         assertThat(postsList.get(0).getContent()).isEqualTo(content);
     }
@@ -85,17 +88,17 @@ public class PostsApiControllerTest {
     @Test
     @WithMockUser(roles="USER")
     public void updateTest() throws Exception {
-        var savedPosts = postsRepository.save(PostsSaveRequestDto.builder()
+        Posts savedPosts = postsRepository.save(PostsSaveRequestDto.builder()
                 .title("title").content("content").author("author").build().toEntity());
 
-        var updateId = savedPosts.getId();
-        var expectedTitle = "title2";
-        var expectedContent = "content2";
+        Long updateId = savedPosts.getId();
+        String expectedTitle = "title2";
+        String expectedContent = "content2";
 
-        var requestDto = PostsUpdateRequestDto.builder()
+        PostsUpdateRequestDto requestDto = PostsUpdateRequestDto.builder()
                 .title(expectedTitle).content(expectedContent).build();
 
-        var url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
+        String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
 
 //        HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
 //        ResponseEntity<Long> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Long.class);
@@ -107,7 +110,7 @@ public class PostsApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andExpect(status().isOk());
 
-        var postsList = postsRepository.findAll();
+        List<Posts> postsList = postsRepository.findAll();
         assertThat(postsList.get(0).getTitle()).isEqualTo(expectedTitle);
         assertThat(postsList.get(0).getContent()).isEqualTo(expectedContent);
     }

@@ -20,8 +20,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
 
-        var isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
-        var isUserClass = SessionUser.class.equals(parameter.getParameterType());
+        boolean isLoginUserAnnotation = parameter.getParameterAnnotation(LoginUser.class) != null;
+        boolean isUserClass = SessionUser.class.equals(parameter.getParameterType());
         return isUserClass && isLoginUserAnnotation;
     }
 

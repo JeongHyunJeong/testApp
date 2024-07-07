@@ -1,6 +1,7 @@
 package org.example.service.posts;
 
 import lombok.RequiredArgsConstructor;
+import org.example.domain.posts.Posts;
 import org.example.web.dto.PostsListResponseDto;
 import org.example.web.dto.PostsResponseDto;
 import org.example.web.dto.PostsUpdateRequestDto;
@@ -24,7 +25,7 @@ public class PostsService {
 
     @Transactional
     public Long Update(Long id, PostsUpdateRequestDto requestDto) {
-        var post = postsRepository.findById(id)
+        Posts post = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
         post.update(requestDto.getTitle(), requestDto.getContent());
@@ -40,7 +41,7 @@ public class PostsService {
     }
 
     public PostsResponseDto FindById(Long id) {
-        var post = postsRepository.findById(id)
+        Posts post = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
         return new PostsResponseDto(post);
@@ -48,12 +49,9 @@ public class PostsService {
 
     @Transactional
     public void DeleteById(Long id) {
-        var posts = postsRepository.findById(id)
+        Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
         postsRepository.delete(posts);
     }
 
-    public void DeleteAll() {
-        postsRepository.deleteAll();
-    }
 }

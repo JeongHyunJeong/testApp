@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.config.auth.LoginUser;
 import org.example.config.auth.dto.SessionUser;
 import org.example.service.posts.PostsService;
+import org.example.web.dto.PostsResponseDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +36,7 @@ public class IndexController {
 
     @GetMapping("/posts/update/{id}")
     public String postsUpdate(@PathVariable Long id, Model model) {
-        var dto = postsService.FindById(id);
+        PostsResponseDto dto = postsService.FindById(id);
         model.addAttribute("post", dto);
         return "post-update";
     }
