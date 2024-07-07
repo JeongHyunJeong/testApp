@@ -26,15 +26,15 @@ public class CustomerOAuth2UserService implements OAuth2UserService<OAuth2UserRe
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
-        var delegate = new DefaultOAuth2UserService();
-        var oAuth2User = delegate.loadUser(oAuth2UserRequest);
+        DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(oAuth2UserRequest);
 
-        var resistrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
-        var userNameAttributeName = oAuth2UserRequest.getClientRegistration().getProviderDetails()
+        String resistrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
+        String userNameAttributeName = oAuth2UserRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
-        var attributes = OAuthAttributes.of(resistrationId, userNameAttributeName, oAuth2User.getAttributes());
+        OAuthAttributes attributes = OAuthAttributes.of(resistrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-        var user = saveOrUpdate(attributes);
+        User user = saveOrUpdate(attributes);
 
         httpSession.setAttribute("user", new SessionUser(user));
 
@@ -45,7 +45,7 @@ public class CustomerOAuth2UserService implements OAuth2UserService<OAuth2UserRe
     }
 
     private User saveOrUpdate(OAuthAttributes attributes) {
-        var user = userRepository.findByEmail(attributes.getEmail())
+        User user = userRepository.findByEmail(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
 
